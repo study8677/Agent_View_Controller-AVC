@@ -63,7 +63,7 @@ cat examples/execution-plan.json | ./avc
 A native window pops up:
 
 <p align="center">
-  <img src="docs/plan-view-demo.png" width="600" alt="AVC Plan View Demo" />
+  <img src="docs/plan-view-demo-en.png" width="600" alt="AVC Plan View Demo" />
 </p>
 
 Drag steps to reorder, edit text, skip steps, add new ones, then click **✅ Confirm** — the modified JSON appears in your terminal.

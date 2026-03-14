@@ -70,7 +70,7 @@ cat examples/execution-plan.json | ./avc
 一个原生窗口弹出：
 
 <p align="center">
-  <img src="docs/plan-view-demo.png" width="600" alt="AVC Plan 视图演示" />
+  <img src="docs/plan-view-demo-cn.png" width="600" alt="AVC Plan 视图演示" />
 </p>
 
 你可以拖拽步骤排序、编辑文字、跳过步骤、添加新步骤，然后点击 **✅ 确认执行** —— 修改后的 JSON 出现在终端。
