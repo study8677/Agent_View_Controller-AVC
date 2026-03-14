@@ -189,14 +189,53 @@ The pattern is universal — **any** tool that can:
         └──────────┘                                              ↕ Human
 ```
 
+## Roadmap
+
+AVC's vision is to become the **universal visual layer** for all CLI agents. Every type of structured data an agent produces should have a beautiful, interactive view.
+
+### Phase 1 — Foundations ✅
+
+| View | What Agent Outputs | What Human Sees | Status |
+|------|--------------------|-----------------|--------|
+| `plan` | Steps with order & status | Draggable step list with edit/skip/delete | ✅ Done |
+
+### Phase 2 — Core Views 🚧
+
+| View | What Agent Outputs | What Human Sees |
+|------|--------------------|------------------|
+| `graph` | Nodes + edges (services, modules) | Interactive topology — drag nodes, edit labels, add/remove connections |
+| `diff` | File paths + hunks | Side-by-side diff with per-line Accept / Reject / Edit |
+| `table` | Rows + columns | Sortable, filterable, editable data grid |
+
+### Phase 3 — Rich Visual Content 🔮
+
+| View | What Agent Outputs | What Human Sees |
+|------|--------------------|------------------|
+| `tree` | File/directory structure | Interactive file tree — rename, move, create, delete |
+| `timeline` | Events with timestamps | Gantt-chart-style timeline — drag to adjust scheduling |
+| `kanban` | Cards with columns | Kanban board — drag cards between columns |
+| `form` | Fields + validation rules | Multi-step wizard form — fill in configs, select options |
+| `mindmap` | Hierarchical ideas | Expandable mind map — restructure by dragging branches |
+
+### Phase 4 — Advanced Visualization 🌟
+
+| View | What Agent Outputs | What Human Sees |
+|------|--------------------|------------------|
+| `metrics` | Numbers + time series | Live dashboard with charts and gauges |
+| `flow` | Pipeline stages + conditions | CI/CD flow diagram — reorder stages, toggle gates |
+| `compare` | Multiple options with pros/cons | Side-by-side comparison cards — vote & rank |
+| `3d-graph` | Complex dependency graphs | 3D force-directed graph — rotate, zoom, filter |
+
+> **The goal**: Any structured JSON → one `| avc` → instant visual interaction. No more reading walls of terminal text.
+
 ## Contributing
 
-Contributions welcome! Especially for new view types:
+Contributions welcome! We especially need help with:
 
-- `graph` — Architecture topology (D3.js / Canvas)
-- `diff` — Code review interface
-- `table` — Data grid with sorting/filtering
-- `tree` — File tree with drag & drop
+- **New view types** — Pick any from the roadmap above and implement it
+- **UI polish** — Animations, themes, accessibility
+- **Platform testing** — Linux (WebKitGTK) and Windows (WebView2)
+- **Agent integration examples** — Show how AVC works with different agents
 
 ## License
 
