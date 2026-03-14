@@ -1,0 +1,17 @@
+{
+  "view": "plan",
+  "title": "微服务重构计划",
+  "editable": true,
+  "data": {
+    "steps": [
+      {"id": 1, "label": "拆分用户服务 (UserService)", "status": "pending"},
+      {"id": 2, "label": "创建 API Gateway", "status": "pending"},
+      {"id": 3, "label": "配置服务发现 (Consul)", "status": "pending"},
+      {"id": 4, "label": "实现服务间 gRPC 通信", "status": "pending"},
+      {"id": 5, "label": "部署 Kubernetes 集群", "status": "pending"},
+      {"id": 6, "label": "配置监控告警 (Prometheus + Grafana)", "status": "pending"},
+      {"id": 7, "label": "压力测试 & 性能调优", "status": "pending"}
+    ]
+  },
+  "actions": ["confirm", "cancel", "reorder"]
+}

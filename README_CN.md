@@ -1,0 +1,223 @@
+<p align="center">
+  <h1 align="center">👁️ AVC — Agent View Controller</h1>
+  <p align="center">
+    <strong>Unix 管道中的「视觉升维器」</strong><br/>
+    <em>Agent 输出 JSON 进去，人类的视觉决策 JSON 出来</em>
+  </p>
+  <p align="center">
+    中文 · <a href="./README.md">English</a>
+  </p>
+</p>
+
+---
+
+## 🧠 为什么需要 AVC？
+
+AI Agent（Codex CLI、Claude Code、Cursor、Gemini CLI……）在终端里**又快又强**。它们读代码、生成方案、执行命令，速度是人类的 100 倍。
+
+但当它们需要**人类拍板**时 —— 一个重构计划、一个架构变更、一个多步部署方案 —— 它们只会在终端里倒出 50 行等宽文字。人类被迫一行行阅读，在脑中重建结构，然后输入 "yes" 或 "no"。
+
+**这太反人类了。**
+
+> 对 Agent 而言，CLI 模式又快又好。
+> 但对人类而言，**视觉才拥有更高的信息密度。**
+
+人脑处理图像的速度是处理文字的 **60,000 倍**。为什么不把 Agent 的输出「升维」成可视化的交互界面，让人类用最擅长的方式做决策？
+
+**这就是 AVC 做的事。**
+
+## ✨ 它是什么？
+
+AVC 是一个 **3MB 的单二进制文件**，它做一件极其简单的事情：
+
+```bash
+echo '{"view":"plan","data":{...}}' | avc
+```
+
+1. 📥 从 `stdin` 读入 JSON
+2. 🖼️ 弹出原生 WebView 窗口，渲染出美观的交互式 UI
+3. 🖱️ 人类在窗口中拖拽、编辑、拍板
+4. 📤 把修改后的 JSON 输出到 `stdout`
+5. 💨 窗口关闭，Agent 继续执行
+
+**像 `fzf` 给了 CLI 用户「交互式选择」的能力，AVC 给了所有 CLI Agent「视觉交互」的能力。**
+
+```
+传统 CLI 管道:   agent | grep | jq | awk       (文字处理)
+AVC 管道:        agent | avc                    (视觉处理)
+```
+
+## 🚀 快速开始
+
+### 安装
+
+```bash
+# 从源码编译
+git clone https://github.com/study8677/Agent_View_Controller-AVC.git
+cd Agent_View_Controller-AVC
+go build -o avc .
+
+# 可选：加到 PATH
+sudo cp avc /usr/local/bin/
+```
+
+### 试一试
+
+```bash
+cat examples/execution-plan.json | ./avc
+```
+
+一个原生窗口弹出。你可以拖拽步骤排序、编辑文字、跳过步骤，然后点击 **✅ 确认执行** —— 修改后的 JSON 出现在终端。
+
+## 📊 支持的视图
+
+| 视图类型 | 描述 | 交互方式 | 状态 |
+|---------|------|---------|------|
+| `plan` | 执行计划 / 步骤列表 | 拖拽排序、编辑内容、跳过/删除、添加新步骤 | ✅ 可用 |
+| `graph` | 架构拓扑图 | 拖拽节点、编辑连线 | 🚧 开发中 |
+| `diff` | 代码 Diff 审查 | 逐行 Accept/Reject | 🚧 计划中 |
+| `table` | 数据表格 | 编辑单元格、排序 | 🚧 计划中 |
+
+## 📐 JSON Schema
+
+```json
+{
+  "view": "plan",
+  "title": "微服务重构计划",
+  "editable": true,
+  "data": {
+    "steps": [
+      { "id": 1, "label": "拆分用户服务", "status": "pending" },
+      { "id": 2, "label": "创建 API Gateway", "status": "pending" },
+      { "id": 3, "label": "配置服务发现", "status": "pending" }
+    ]
+  },
+  "actions": ["confirm", "cancel"]
+}
+```
+
+## 🤖 与 AI Agent 集成
+
+AVC 是 **Agent-agnostic（不绑定任何 Agent）** 的工具。任何能执行 shell 命令的 AI Agent 都能用它。
+
+### 🔧 OpenAI Codex CLI
+
+在项目的 `AGENTS.md` 中添加：
+
+```markdown
+## 视觉决策工具
+
+当你生成复杂的执行计划（>3 步骤）、架构变更或多文件重构方案时，
+将其输出为 AVC 兼容的 JSON 并通过 `avc` 管道传给人类进行可视化审查：
+
+    echo '{"view":"plan","title":"...","data":{"steps":[...]}}' | avc
+
+命令会阻塞直到人类确认。捕获 stdout 获取人类修改后的计划，然后按计划执行。
+```
+
+Codex 会自动在生成复杂计划时使用 AVC：
+
+```bash
+# Codex 生成计划 → 管道传给 AVC → 等待人类 → 继续执行
+echo '{"view":"plan","title":"重构认证模块","data":{"steps":[
+  {"id":1,"label":"抽取认证中间件","status":"pending"},
+  {"id":2,"label":"创建 JWT 服务","status":"pending"},
+  {"id":3,"label":"更新路由处理器","status":"pending"},
+  {"id":4,"label":"添加集成测试","status":"pending"}
+]}}' | avc
+```
+
+### 💬 Claude Code
+
+在项目的 `CLAUDE.md` 或系统提示中添加：
+
+```markdown
+## AVC 集成
+
+当需要展示复杂执行计划时，使用 `avc` 可视化工具代替纯文本输出。
+构造包含 view 类型和数据的 JSON 对象，通过管道传给 `avc`：
+
+    echo '<json>' | avc
+
+这会打开一个可视化 UI 让人类审查和修改计划。
+修改后的 JSON 通过 stdout 返回。请等待返回后再继续。
+```
+
+### 🖱️ Cursor（AI IDE）
+
+在 Cursor 的终端中，AVC 作为标准 Unix 管道工具使用。在 `.cursorrules` 中配置：
+
+```markdown
+## 可视化计划
+
+生成多步骤计划时，使用 `avc` 进行可视化人类审查：
+1. 构造符合 view:"plan" schema 的 JSON
+2. 运行: echo '<json>' | avc
+3. 读取 stdout 获取人类批准的计划
+4. 执行批准的步骤
+```
+
+### 🌐 通用模式
+
+核心模式非常简单 —— **任何**能做到以下三点的工具都能使用 AVC：
+
+1. 把 JSON 写入一个进程的 stdin
+2. 读取该进程的 stdout
+3. 等待进程退出
+
+它就是一个 Unix 管道工具。
+
+## 💎 设计哲学
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                                                              │
+│   Agent 是 CPU ── 负责高速思考、生成、执行                     │
+│   AVC 是显示器 ── 负责将信息升维为视觉，供人类直觉判断           │
+│                                                              │
+│   暗线（机器的归机器）：Agent 在终端里高速处理 JSON/代码          │
+│   明线（人类的归人类）：AVC 将复杂信息瞬间升维为可交互图形         │
+│                                                              │
+│   终端负责「动手的极速执行」                                    │
+│   AVC 负责「动脑的极速降维」                                    │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+```
+
+| 原则 | 说明 |
+|------|------|
+| **Agent 是 CPU，AVC 是显示器** | Agent 负责思考，AVC 负责展示 |
+| **Agent-agnostic** | 不绑定任何 Agent，Codex / Claude / Gemini / Cursor 都能用 |
+| **Unix 哲学** | stdin 进、stdout 出，可与任何管道工具组合 |
+| **零依赖** | 单二进制，使用系统原生 WebView |
+| **< 100ms 启动** | 原生二进制，无 Node.js / npm 开销 |
+
+## 🏗️ 架构
+
+```
+        ┌──────────┐     stdin      ┌──────────┐     render     ┌──────────┐
+        │ AI Agent │ ──── JSON ───→ │   AVC    │ ────────────→  │ WebView  │
+        │ (Codex,  │                │ (3MB Go  │                │ (Native  │
+        │  Claude, │ ←── JSON ────  │  Binary) │ ←── confirm ─  │  Window) │
+        │  Cursor) │     stdout     └──────────┘     callback   └──────────┘
+        └──────────┘                                              ↕ 人类
+```
+
+## 🛠️ 技术栈
+
+- **Go** + [webview/webview_go](https://github.com/webview/webview_go) — 系统原生 WebView 绑定
+- **Vanilla JS** — 通过 `go:embed` 嵌入，零前端依赖
+- **macOS**: WKWebView · **Linux**: WebKitGTK · **Windows**: WebView2
+
+## 🤝 贡献
+
+欢迎贡献！特别是新的视图类型：
+
+- `graph` — 架构拓扑图（D3.js / Canvas）
+- `diff` — 代码审查界面
+- `table` — 数据表格（排序/过滤）
+- `tree` — 文件树（拖拽操作）
+
+## 📄 License
+
+Apache 2.0
