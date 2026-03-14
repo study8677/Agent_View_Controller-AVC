@@ -60,7 +60,75 @@ sudo cp avc /usr/local/bin/
 cat examples/execution-plan.json | ./avc
 ```
 
-A native window pops up. Drag steps to reorder, edit text, skip steps, then click **✅ Confirm** — the modified JSON appears in your terminal.
+A native window pops up:
+
+<p align="center">
+  <img src="docs/plan-view-demo.png" width="600" alt="AVC Plan View Demo" />
+</p>
+
+Drag steps to reorder, edit text, skip steps, add new ones, then click **✅ Confirm** — the modified JSON appears in your terminal.
+
+## Usage Examples
+
+### Example 1: Database Migration Plan
+
+```bash
+echo '{
+  "view": "plan",
+  "title": "Database Migration v3 → v4",
+  "editable": true,
+  "data": {
+    "steps": [
+      {"id": 1, "label": "Backup production database", "status": "pending"},
+      {"id": 2, "label": "Run migration scripts on staging", "status": "pending"},
+      {"id": 3, "label": "Verify data integrity checks", "status": "pending"},
+      {"id": 4, "label": "Switch DNS to maintenance page", "status": "pending"},
+      {"id": 5, "label": "Execute production migration", "status": "pending"},
+      {"id": 6, "label": "Run smoke tests", "status": "pending"},
+      {"id": 7, "label": "Remove maintenance page", "status": "pending"}
+    ]
+  }
+}' | ./avc
+```
+
+> 💡 Human can reorder steps (e.g., move smoke tests before DNS switch), skip backup if already done, or add a "Notify team on Slack" step.
+
+### Example 2: API Refactoring Plan
+
+```bash
+echo '{
+  "view": "plan",
+  "title": "REST → GraphQL Migration",
+  "editable": true,
+  "data": {
+    "steps": [
+      {"id": 1, "label": "Set up GraphQL server with Apollo", "status": "pending"},
+      {"id": 2, "label": "Define schema types for User, Post, Comment", "status": "pending"},
+      {"id": 3, "label": "Implement resolvers with existing service layer", "status": "pending"},
+      {"id": 4, "label": "Add authentication middleware", "status": "pending"},
+      {"id": 5, "label": "Set up DataLoader for N+1 prevention", "status": "pending"},
+      {"id": 6, "label": "Write integration tests", "status": "pending"},
+      {"id": 7, "label": "Deploy with REST fallback route", "status": "pending"},
+      {"id": 8, "label": "Deprecate REST endpoints", "status": "pending"}
+    ]
+  }
+}' | ./avc
+```
+
+### Example 3: Capture and Use the Result
+
+```bash
+# Agent captures the human-approved plan
+RESULT=$(cat examples/execution-plan.json | ./avc)
+
+if [ $? -eq 0 ]; then
+  echo "✅ Human approved:"
+  echo "$RESULT" | jq '.data.steps[] | select(.skipped != true) | .label'
+  # Agent proceeds to execute only the approved, non-skipped steps
+else
+  echo "❌ Human cancelled the plan"
+fi
+```
 
 ## Supported Views
 

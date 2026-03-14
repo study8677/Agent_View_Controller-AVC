@@ -67,7 +67,75 @@ sudo cp avc /usr/local/bin/
 cat examples/execution-plan.json | ./avc
 ```
 
-一个原生窗口弹出。你可以拖拽步骤排序、编辑文字、跳过步骤，然后点击 **✅ 确认执行** —— 修改后的 JSON 出现在终端。
+一个原生窗口弹出：
+
+<p align="center">
+  <img src="docs/plan-view-demo.png" width="600" alt="AVC Plan 视图演示" />
+</p>
+
+你可以拖拽步骤排序、编辑文字、跳过步骤、添加新步骤，然后点击 **✅ 确认执行** —— 修改后的 JSON 出现在终端。
+
+## 📖 使用示例
+
+### 示例 1：数据库迁移计划
+
+```bash
+echo '{
+  "view": "plan",
+  "title": "数据库迁移 v3 → v4",
+  "editable": true,
+  "data": {
+    "steps": [
+      {"id": 1, "label": "备份生产数据库", "status": "pending"},
+      {"id": 2, "label": "在 staging 环境执行迁移脚本", "status": "pending"},
+      {"id": 3, "label": "验证数据完整性", "status": "pending"},
+      {"id": 4, "label": "切换 DNS 到维护页面", "status": "pending"},
+      {"id": 5, "label": "执行生产环境迁移", "status": "pending"},
+      {"id": 6, "label": "运行冒烟测试", "status": "pending"},
+      {"id": 7, "label": "撤除维护页面", "status": "pending"}
+    ]
+  }
+}' | ./avc
+```
+
+> 💡 人类可以：重排步骤顺序（比如把冒烟测试提前）、跳过已完成的备份、或者添加一个「在 Slack 通知团队」的新步骤。
+
+### 示例 2：API 重构计划
+
+```bash
+echo '{
+  "view": "plan",
+  "title": "REST → GraphQL 迁移",
+  "editable": true,
+  "data": {
+    "steps": [
+      {"id": 1, "label": "搭建 Apollo GraphQL 服务", "status": "pending"},
+      {"id": 2, "label": "定义 User/Post/Comment Schema", "status": "pending"},
+      {"id": 3, "label": "实现 Resolver 对接现有服务层", "status": "pending"},
+      {"id": 4, "label": "添加认证中间件", "status": "pending"},
+      {"id": 5, "label": "配置 DataLoader 解决 N+1 问题", "status": "pending"},
+      {"id": 6, "label": "编写集成测试", "status": "pending"},
+      {"id": 7, "label": "部署并保留 REST 降级路由", "status": "pending"},
+      {"id": 8, "label": "废弃 REST 端点", "status": "pending"}
+    ]
+  }
+}' | ./avc
+```
+
+### 示例 3：捕获人类修改后的结果
+
+```bash
+# Agent 捕获人类批准的计划
+RESULT=$(cat examples/execution-plan.json | ./avc)
+
+if [ $? -eq 0 ]; then
+  echo "✅ 人类已批准："
+  echo "$RESULT" | jq '.data.steps[] | select(.skipped != true) | .label'
+  # Agent 只执行批准的、未跳过的步骤
+else
+  echo "❌ 人类取消了计划"
+fi
+```
 
 ## 📊 支持的视图
 
