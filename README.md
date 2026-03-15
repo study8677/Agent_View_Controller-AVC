@@ -146,6 +146,7 @@ fi
   "view": "plan",
   "title": "Microservice Refactor Plan",
   "editable": true,
+  "token_count": 4500,
   "data": {
     "steps": [
       { "id": 1, "label": "Extract UserService", "status": "pending" },
@@ -157,13 +158,74 @@ fi
 }
 ```
 
+> Note: `token_count` is optional. If omitted, AVC estimates from byte length.
+
+## 🎚️ Token Threshold
+
+AVC has a built-in **smart filter**: only when the content exceeds a token threshold (default: **3000 tokens**) will the WebView window pop up. Short content passes through directly without interrupting the human.
+
+### How It Works
+
+```
+stdin JSON ──→ AVC reads ──→ Check token count
+                              │
+                   ≤ 3K token │ > 3K token
+                      ↓               ↓
+              Output to stdout    Pop up WebView
+              (pass-through)      Interactive review
+```
+
+- If the JSON contains a `token_count` field → use that value
+- Otherwise → estimate from byte length (`bytes / 3`)
+- If token count ≤ threshold → pass-through (exit code `0`, original JSON on stdout)
+
+### CLI Options
+
+```bash
+# Always show WebView (bypass threshold)
+echo '<json>' | avc --no-threshold
+
+# Set a custom threshold
+echo '<json>' | avc --threshold=5000
+```
+
+### Include Token Count in JSON (Recommended)
+
+For accurate control, have the Agent include `token_count` in the JSON:
+
+```json
+{
+  "view": "plan",
+  "title": "Your Plan",
+  "token_count": 4500,
+  "data": { "steps": [...] }
+}
+```
+
+
 ## Using AVC with AI Agents
 
 AVC is **agent-agnostic** — it works with any AI coding agent that can execute shell commands.
 
+### ⭐ Method 1: Install as a Skill (Recommended)
+
+The easiest way. Copy the skill folder into your agent's skills directory — works globally across all projects:
+
+```bash
+# For Gemini CLI / Antigravity
+cp -r skills/avc/ ~/.gemini/skills/avc/
+
+# For any project with a skills/ directory
+cp -r skills/avc/ your-project/skills/avc/
+```
+
+Once installed, the agent **automatically knows** when and how to use AVC. No per-project configuration needed.
+
+### Method 2: Per-Project Config Files
+
 ### With OpenAI Codex CLI
 
-Add to your project's `AGENTS.md`:
+Add the included `AGENTS.md` to your project root (already provided in this repo).
 
 ```markdown
 ## Visual Decision Tool

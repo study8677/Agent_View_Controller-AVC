@@ -153,6 +153,7 @@ fi
   "view": "plan",
   "title": "微服务重构计划",
   "editable": true,
+  "token_count": 4500,
   "data": {
     "steps": [
       { "id": 1, "label": "拆分用户服务", "status": "pending" },
@@ -164,13 +165,74 @@ fi
 }
 ```
 
+> 注：`token_count` 是可选字段。如果省略，AVC 会根据 JSON 字节长度自动估算。
+
+## 🎚️ Token 阈值
+
+AVC 内置**智能过滤机制**：仅当内容超过 token 阈值（默认：**3000 token**）时，才会弹出 WebView 窗口。短内容直接透传，不打断人类工作流。
+
+### 工作原理
+
+```
+stdin JSON ──→ AVC 读取 ──→ 判断 token 数
+                              │
+                   ≤ 3K token │ > 3K token
+                      ↓               ↓
+               直接输出到 stdout    弹出 WebView
+               （pass-through）     交互式审查
+```
+
+- 如果 JSON 包含 `token_count` 字段 → 使用该值
+- 否则 → 根据字节长度估算（`字节数 / 3`）
+- 如果 token 数 ≤ 阈值 → 透传模式（退出码 `0`，原始 JSON 输出到 stdout）
+
+### CLI 参数
+
+```bash
+# 强制弹窗（跳过阈值判断）
+echo '<json>' | avc --no-threshold
+
+# 自定义阈值
+echo '<json>' | avc --threshold=5000
+```
+
+### 在 JSON 中包含 Token 数（推荐）
+
+为了精确控制，让 Agent 在 JSON 中传入 `token_count`：
+
+```json
+{
+  "view": "plan",
+  "title": "你的计划",
+  "token_count": 4500,
+  "data": { "steps": [...] }
+}
+```
+
+
 ## 🤖 与 AI Agent 集成
 
 AVC 是 **Agent-agnostic（不绑定任何 Agent）** 的工具。任何能执行 shell 命令的 AI Agent 都能用它。
 
+### ⭐ 方式一：安装为 Skill（推荐）
+
+最简单的方式。把 skill 文件夹拷到你的 Agent 的 skills 目录——全局生效，无需每个项目单独配置：
+
+```bash
+# Gemini CLI / Antigravity
+cp -r skills/avc/ ~/.gemini/skills/avc/
+
+# 或者复制到任何项目的 skills/ 目录
+cp -r skills/avc/ your-project/skills/avc/
+```
+
+安装后，Agent **自动知道**何时以及如何使用 AVC。无需额外配置。
+
+### 方式二：每个项目单独配置
+
 ### 🔧 OpenAI Codex CLI
 
-在项目的 `AGENTS.md` 中添加：
+在项目根目录放入 `AGENTS.md`（本仓库已提供）。
 
 ```markdown
 ## 视觉决策工具

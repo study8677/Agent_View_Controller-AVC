@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -11,14 +12,26 @@ import (
 
 // AVCInput is the top-level JSON schema for AVC
 type AVCInput struct {
-	View     string          `json:"view"`
-	Title    string          `json:"title"`
-	Data     json.RawMessage `json:"data"`
-	Editable bool            `json:"editable"`
-	Actions  []string        `json:"actions"`
+	View       string          `json:"view"`
+	Title      string          `json:"title"`
+	Data       json.RawMessage `json:"data"`
+	Editable   bool            `json:"editable"`
+	Actions    []string        `json:"actions"`
+	TokenCount int             `json:"token_count,omitempty"` // optional: LLM response token count
 }
 
+// CLI flags
+var (
+	threshold   = flag.Int("threshold", 3000, "Token threshold to trigger WebView (default 3000)")
+	noThreshold = flag.Bool("no-threshold", false, "Always show WebView regardless of token count")
+)
+
+// Average bytes per token estimate (conservative for mixed CJK/Latin text)
+const bytesPerToken = 3
+
 func main() {
+	flag.Parse()
+
 	// ① Read JSON from stdin
 	inputBytes, err := io.ReadAll(os.Stdin)
 	if err != nil {
@@ -41,6 +54,20 @@ func main() {
 	if input.View == "" {
 		fmt.Fprintf(os.Stderr, "avc: missing required field 'view'\n")
 		os.Exit(1)
+	}
+
+	// ②.5 Token threshold check — pass-through if below threshold
+	if !*noThreshold && *threshold > 0 {
+		tokenCount := input.TokenCount
+		if tokenCount == 0 {
+			// Fallback: estimate token count from byte length
+			tokenCount = len(inputBytes) / bytesPerToken
+		}
+		if tokenCount <= *threshold {
+			fmt.Fprintf(os.Stderr, "avc: token count (%d) ≤ threshold (%d), passing through\n", tokenCount, *threshold)
+			fmt.Print(string(inputBytes))
+			os.Exit(0)
+		}
 	}
 
 	title := input.Title
