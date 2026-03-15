@@ -51,15 +51,28 @@ AVC 管道:        agent | avc                    (视觉处理)
 
 ### 安装
 
+**一键安装**（编译二进制 + 为所有检测到的 Agent 安装 Skill）：
+
 ```bash
-# 从源码编译
+curl -sSL https://raw.githubusercontent.com/study8677/Agent_View_Controller-AVC/main/install.sh | bash
+```
+
+<details>
+<summary>手动安装</summary>
+
+```bash
 git clone https://github.com/study8677/Agent_View_Controller-AVC.git
 cd Agent_View_Controller-AVC
 go build -o avc .
-
-# 可选：加到 PATH
 sudo cp avc /usr/local/bin/
+
+# 为你的 Agent 安装 Skill
+cp -r skills/avc/ ~/.codex/skills/avc/    # Codex CLI
+cp -r skills/avc/ ~/.claude/skills/avc/   # Claude Code
+cp -r skills/avc/ ~/.gemini/skills/avc/   # Gemini CLI
 ```
+
+</details>
 
 ### 试一试
 

@@ -44,15 +44,28 @@ AVC pipe:           agent | avc                    (visual processing)
 
 ### Install
 
+**One-line install** (builds binary + installs skills for all detected agents):
+
 ```bash
-# Build from source
+curl -sSL https://raw.githubusercontent.com/study8677/Agent_View_Controller-AVC/main/install.sh | bash
+```
+
+<details>
+<summary>Manual install</summary>
+
+```bash
 git clone https://github.com/study8677/Agent_View_Controller-AVC.git
 cd Agent_View_Controller-AVC
 go build -o avc .
-
-# Optional: add to PATH
 sudo cp avc /usr/local/bin/
+
+# Install skill for your agent
+cp -r skills/avc/ ~/.codex/skills/avc/    # Codex CLI
+cp -r skills/avc/ ~/.claude/skills/avc/   # Claude Code
+cp -r skills/avc/ ~/.gemini/skills/avc/   # Gemini CLI
 ```
+
+</details>
 
 ### Try It
 
