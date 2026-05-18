@@ -11,7 +11,8 @@ const I18N = {
     delete:         'Delete',
     addStep:        '+ Add step',
     newStep:        'New step',
-    stepsActive:    (a, t) => `${a}/${t} steps active · drag to reorder · Enter to confirm`,
+    keyboardHints:  '↑↓/jk: move · Space: skip · Enter: edit · A: add · Del: remove',
+    stepsActive:    (a, t) => `${a}/${t} steps active · ↑↓/jk: move · Space: skip · Enter: edit · A: add · Del: remove`,
     doneMessage:    '✅ Sent back. You may close this window.',
     loadError:      'Failed to load data',
     unknownView:    'Unknown view type',
@@ -28,7 +29,8 @@ const I18N = {
     delete:         '删除',
     addStep:        '+ 添加步骤',
     newStep:        '新步骤',
-    stepsActive:    (a, t) => `${a}/${t} 步骤生效 · 拖动可重排序 · Enter 确认`,
+    keyboardHints:  '↑↓/jk：移动 · Space：跳过 · Enter：编辑 · A：新增 · Del：删除',
+    stepsActive:    (a, t) => `${a}/${t} 步骤生效 · ↑↓/jk：移动 · Space：跳过 · Enter：编辑 · A：新增 · Del：删除`,
     doneMessage:    '✅ 已回传，本窗口可关闭',
     loadError:      '加载数据失败',
     unknownView:    '未知视图类型',
@@ -45,7 +47,8 @@ const I18N = {
     delete:         '削除',
     addStep:        '+ ステップ追加',
     newStep:        '新しいステップ',
-    stepsActive:    (a, t) => `${a}/${t} ステップ有効 · ドラッグで並べ替え · Enter で実行`,
+    keyboardHints:  '↑↓/jk：移動 · Space：スキップ · Enter：編集 · A：追加 · Del：削除',
+    stepsActive:    (a, t) => `${a}/${t} ステップ有効 · ↑↓/jk：移動 · Space：スキップ · Enter：編集 · A：追加 · Del：削除`,
     doneMessage:    '✅ 送信しました。ウィンドウを閉じてください。',
     loadError:      'データの読み込みに失敗しました',
     unknownView:    '不明なビュータイプ',
@@ -62,7 +65,8 @@ const I18N = {
     delete:         '삭제',
     addStep:        '+ 단계 추가',
     newStep:        '새 단계',
-    stepsActive:    (a, t) => `${a}/${t} 단계 활성 · 끌어서 순서 변경 · Enter 실행`,
+    keyboardHints:  '↑↓/jk: 이동 · Space: 건너뛰기 · Enter: 편집 · A: 추가 · Del: 삭제',
+    stepsActive:    (a, t) => `${a}/${t} 단계 활성 · ↑↓/jk: 이동 · Space: 건너뛰기 · Enter: 편집 · A: 추가 · Del: 삭제`,
     doneMessage:    '✅ 전송 완료. 이 창을 닫아도 됩니다.',
     loadError:      '데이터 로드 실패',
     unknownView:    '알 수 없는 뷰 유형',
@@ -79,7 +83,8 @@ const I18N = {
     delete:         'Eliminar',
     addStep:        '+ Añadir paso',
     newStep:        'Nuevo paso',
-    stepsActive:    (a, t) => `${a}/${t} pasos activos · arrastra para reordenar · Enter para confirmar`,
+    keyboardHints:  '↑↓/jk: mover · Space: omitir · Enter: editar · A: añadir · Del: borrar',
+    stepsActive:    (a, t) => `${a}/${t} pasos activos · ↑↓/jk: mover · Space: omitir · Enter: editar · A: añadir · Del: borrar`,
     doneMessage:    '✅ Enviado. Puedes cerrar esta ventana.',
     loadError:      'Error al cargar los datos',
     unknownView:    'Tipo de vista desconocido',
@@ -96,7 +101,8 @@ const I18N = {
     delete:         'Supprimer',
     addStep:        '+ Ajouter une étape',
     newStep:        'Nouvelle étape',
-    stepsActive:    (a, t) => `${a}/${t} étapes actives · glisser pour réordonner · Entrée pour confirmer`,
+    keyboardHints:  '↑↓/jk : déplacer · Espace : ignorer · Entrée : éditer · A : ajouter · Suppr : supprimer',
+    stepsActive:    (a, t) => `${a}/${t} étapes actives · ↑↓/jk : déplacer · Espace : ignorer · Entrée : éditer · A : ajouter · Suppr : supprimer`,
     doneMessage:    '✅ Envoyé. Vous pouvez fermer cette fenêtre.',
     loadError:      'Échec du chargement des données',
     unknownView:    'Type de vue inconnu',
@@ -113,7 +119,8 @@ const I18N = {
     delete:         'Löschen',
     addStep:        '+ Schritt hinzufügen',
     newStep:        'Neuer Schritt',
-    stepsActive:    (a, t) => `${a}/${t} Schritte aktiv · zum Neuordnen ziehen · Enter zum Bestätigen`,
+    keyboardHints:  '↑↓/jk: bewegen · Leertaste: überspringen · Enter: bearbeiten · A: hinzufügen · Entf: löschen',
+    stepsActive:    (a, t) => `${a}/${t} Schritte aktiv · ↑↓/jk: bewegen · Leertaste: überspringen · Enter: bearbeiten · A: hinzufügen · Entf: löschen`,
     doneMessage:    '✅ Gesendet. Sie können dieses Fenster schließen.',
     loadError:      'Daten konnten nicht geladen werden',
     unknownView:    'Unbekannter Ansichtstyp',
@@ -240,17 +247,27 @@ function installKeyboardShortcuts() {
       return;
     }
 
-    // Cmd/Ctrl+Enter always confirms; plain Enter confirms only when not editing
-    if (e.key === 'Enter') {
-      if (e.metaKey || e.ctrlKey) {
-        e.preventDefault();
-        handleConfirm();
-        return;
-      }
-      if (!editing && !e.shiftKey) {
-        e.preventDefault();
-        handleConfirm();
-      }
+    // Cmd/Ctrl+Enter always confirms — wins over any per-view handler.
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleConfirm();
+      return;
+    }
+
+    // While the user is typing into a field we never intercept further.
+    if (editing) return;
+
+    // Let the active view consume the key first (e.g. plan view's j/k/Space).
+    // The view returns true if it handled the event; we then bail out so the
+    // global Enter→confirm fallback below doesn't fire.
+    if (typeof handlePlanKey === 'function' && inputData?.view === 'plan') {
+      if (handlePlanKey(e)) return;
+    }
+
+    // Fallback: plain Enter confirms when no view consumed it.
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleConfirm();
     }
   });
 }
