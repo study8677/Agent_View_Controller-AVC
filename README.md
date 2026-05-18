@@ -158,6 +158,7 @@ fi
 {
   "view": "plan",
   "title": "Microservice Refactor Plan",
+  "lang": "en",
   "editable": true,
   "token_count": 4500,
   "data": {
@@ -171,7 +172,10 @@ fi
 }
 ```
 
-> Note: `token_count` is optional. If omitted, AVC estimates from byte length.
+> Notes:
+> - `token_count` is optional. If omitted, AVC estimates from byte length.
+> - `lang` is optional (default `"en"`). Set `"zh"` to render the UI buttons
+>   and status bar in Chinese — match this to the language of your step labels.
 
 ## 🎚️ Token Threshold
 

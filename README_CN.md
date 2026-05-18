@@ -165,6 +165,7 @@ fi
 {
   "view": "plan",
   "title": "微服务重构计划",
+  "lang": "zh",
   "editable": true,
   "token_count": 4500,
   "data": {
@@ -178,7 +179,10 @@ fi
 }
 ```
 
-> 注：`token_count` 是可选字段。如果省略，AVC 会根据 JSON 字节长度自动估算。
+> 说明：
+> - `token_count` 是可选字段。如果省略，AVC 会根据 JSON 字节长度自动估算。
+> - `lang` 是可选字段（默认 `"en"`）。设为 `"zh"` 让 UI 按钮和状态栏切换为中文 ——
+>   建议和 step 标签的语言保持一致，避免中英混杂。
 
 ## 🎚️ Token 阈值
 

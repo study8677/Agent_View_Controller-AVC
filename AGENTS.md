@@ -67,6 +67,7 @@ echo '<json>' | avc --threshold=5000
 {
   "view": "plan",
   "title": "Plan title shown in window header",
+  "lang": "en",
   "editable": true,
   "token_count": 4500,
   "data": {
@@ -82,7 +83,10 @@ echo '<json>' | avc --threshold=5000
 }
 ```
 
-> Note: `token_count` is optional. If omitted, AVC estimates from byte length.
+> Notes:
+> - `token_count` is optional. If omitted, AVC estimates from byte length.
+> - `lang` is optional (default `"en"`). Set to `"zh"` to render UI in Chinese.
+>   Match this to the language of the step labels for a consistent UI.
 
 ### Supported view types
 
