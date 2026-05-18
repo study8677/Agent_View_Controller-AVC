@@ -1,0 +1,43 @@
+name: Release
+
+# Fires on tag pushes like v0.4.0. The first release (v0.3.0) is being
+# attached manually by Agent A — this workflow takes over from the NEXT
+# tag onwards. We deliberately don't filter v0.3.0 here because the
+# config (`mode: keep-existing`) ensures we won't clobber any existing
+# release notes if this happens to fire against an existing release.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  # contents:write is needed to upload binaries to the GitHub Release.
+  contents: write
+
+jobs:
+  goreleaser:
+    # macOS only for now — AVC links the system WebView via CGO, and we
+    # don't have cross-compile infra for Linux/Windows yet. Sticking to
+    # macos-latest matches the .goreleaser.yml build matrix (darwin only).
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # GoReleaser needs the full history to compute the changelog
+          # against the previous tag.
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
