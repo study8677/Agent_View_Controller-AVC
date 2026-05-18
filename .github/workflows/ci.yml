@@ -59,3 +59,49 @@ jobs:
             echo "Expected exit 1 for invalid JSON"
             exit 1
           fi
+
+      - name: Smoke test — every examples/*.json
+        run: |
+          # Every example ships with token_count > 3000, which would normally
+          # pop the WebView. CI has no display, so we force the pass-through
+          # path with --threshold=99999 (any value above the largest example).
+          # For each example we assert: exit 0, valid JSON, and the `view`
+          # field round-trips unchanged.
+          set -eu
+          shopt -s nullglob
+          examples=(examples/*.json)
+          if [ "${#examples[@]}" -eq 0 ]; then
+            echo "No examples/*.json files found — failing the smoke step."
+            exit 1
+          fi
+          echo "Smoke-testing ${#examples[@]} example file(s)..."
+          fail=0
+          for f in "${examples[@]}"; do
+            echo "--- $f"
+            expected_view=$(jq -r '.view' "$f")
+            set +e
+            out=$(./avc --threshold=99999 < "$f")
+            code=$?
+            set -e
+            if [ "$code" -ne 0 ]; then
+              echo "FAIL: $f exited with $code (expected 0)"
+              fail=1
+              continue
+            fi
+            if ! printf '%s' "$out" | jq empty >/dev/null 2>&1; then
+              echo "FAIL: $f produced invalid JSON output"
+              fail=1
+              continue
+            fi
+            actual_view=$(printf '%s' "$out" | jq -r '.view')
+            if [ "$actual_view" != "$expected_view" ]; then
+              echo "FAIL: $f view mismatch (expected '$expected_view', got '$actual_view')"
+              fail=1
+              continue
+            fi
+          done
+          if [ "$fail" -ne 0 ]; then
+            echo "One or more example smoke tests failed."
+            exit 1
+          fi
+          echo "All ${#examples[@]} example(s) passed smoke test."
