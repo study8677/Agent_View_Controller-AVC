@@ -1,0 +1,78 @@
+# GoReleaser config for AVC (Agent View Controller).
+#
+# Scope: macOS only for now. AVC links against the system WebView via CGO,
+# so cross-compiling Linux/Windows from a macOS runner is non-trivial and
+# is deferred until we set up a proper cross-compile pipeline.
+#
+# This config is designed to ATTACH artifacts to a GitHub Release that
+# already exists (Agent A creates the release manually for v0.3.0; later
+# tags will create it via gh in the release workflow). We deliberately
+# do not push to Homebrew here — the tap at study8677/homebrew-tap is
+# updated manually for now to avoid double-writes.
+version: 2
+
+project_name: avc
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: avc
+    main: .
+    binary: avc
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - darwin
+    goarch:
+      - arm64
+      - amd64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  - id: avc
+    ids:
+      - avc
+    formats:
+      - tar.gz
+    # e.g. avc_0.4.0_darwin_arm64.tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+      - skills/avc/SKILL.md
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  use: github
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+release:
+  github:
+    owner: study8677
+    name: Agent_View_Controller-AVC
+  # Don't create the release ourselves — Agent A creates it manually for
+  # v0.3.0, and `gh release create` in the workflow handles future tags.
+  # `mode: keep-existing` ensures we don't overwrite the human-written
+  # release notes when attaching binaries.
+  mode: keep-existing
+  draft: false
+  prerelease: auto
+
+# Explicitly do NOT configure brews: — we don't want goreleaser pushing to
+# study8677/homebrew-tap while a manually maintained Formula is still the
+# source of truth. Re-enable here once we retire the manual Formula.
