@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    # Only macOS is verified end-to-end today. Linux/Windows support
+    # is unverified — see README for status.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/Library/Caches/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
+
+      - name: Go vet
+        run: go vet ./...
+
+      - name: Run tests
+        run: go test -v ./...
+
+      - name: Build (with version injection)
+        run: |
+          VERSION="${GITHUB_REF_NAME:-dev-${GITHUB_SHA::7}}"
+          CGO_ENABLED=1 go build -ldflags "-X main.version=${VERSION}" -o avc .
+          ./avc --version
+
+      - name: Smoke test — pass-through
+        run: |
+          # Pass-through prints inputBytes verbatim (no JSON re-marshal), so
+          # we compare semantically with jq rather than byte-for-byte. This
+          # stays correct even if the pass-through path later normalizes JSON.
+          OUT=$(echo '{"view":"plan","title":"smoke","token_count":50,"data":{"steps":[]}}' | ./avc)
+          echo "$OUT" | jq -e '.view == "plan" and .title == "smoke" and .token_count == 50' > /dev/null || {
+            echo "Pass-through output failed semantic check: $OUT"
+            exit 1
+          }
+
+      - name: Smoke test — invalid JSON exits 1
+        run: |
+          set +e
+          echo 'not json' | ./avc > /dev/null
+          if [ $? -ne 1 ]; then
+            echo "Expected exit 1 for invalid JSON"
+            exit 1
+          fi
