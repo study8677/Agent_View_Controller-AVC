@@ -54,11 +54,21 @@ AVC 管道:        agent | avc                    (视觉处理)
 
 ### 安装
 
-**一键安装**（编译二进制 + 为所有检测到的 Agent 安装 Skill）：
+**🍺 Homebrew（macOS / Linuxbrew，推荐）**
+
+```bash
+brew install study8677/tap/avc
+```
+
+装完后 `brew info avc` 会打印把 skill 拷到 Claude Code / Codex / Gemini 的一行命令。
+
+**🚀 一键安装脚本**（从源码编译 + 自动给每个检测到的 Agent 装 skill）
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/study8677/Agent_View_Controller-AVC/main/install.sh | bash
 ```
+
+优先装到 `~/.local/bin`（无 sudo），找不到就回退到 `/usr/local/bin`。需要 Go ≥ 1.24。
 
 <details>
 <summary>手动安装</summary>
@@ -67,12 +77,12 @@ curl -sSL https://raw.githubusercontent.com/study8677/Agent_View_Controller-AVC/
 git clone https://github.com/study8677/Agent_View_Controller-AVC.git
 cd Agent_View_Controller-AVC
 go build -o avc .
-sudo cp avc /usr/local/bin/
+install -m 755 avc ~/.local/bin/   # 或 sudo cp avc /usr/local/bin/
 
 # 为你的 Agent 安装 Skill
-cp -r skills/avc/ ~/.codex/skills/avc/    # Codex CLI
-cp -r skills/avc/ ~/.claude/skills/avc/   # Claude Code
-cp -r skills/avc/ ~/.gemini/skills/avc/   # Gemini CLI
+mkdir -p ~/.codex/skills/avc  && cp skills/avc/SKILL.md ~/.codex/skills/avc/   # Codex CLI
+mkdir -p ~/.claude/skills/avc && cp skills/avc/SKILL.md ~/.claude/skills/avc/  # Claude Code
+mkdir -p ~/.gemini/skills/avc && cp skills/avc/SKILL.md ~/.gemini/skills/avc/  # Gemini CLI
 ```
 
 </details>

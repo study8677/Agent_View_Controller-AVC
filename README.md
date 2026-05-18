@@ -47,11 +47,21 @@ AVC pipe:           agent | avc                    (visual processing)
 
 ### Install
 
-**One-line install** (builds binary + installs skills for all detected agents):
+**🍺 Homebrew (macOS / Linuxbrew, recommended)**
+
+```bash
+brew install study8677/tap/avc
+```
+
+After install, `brew info avc` prints one-line copy commands to wire the skill into Claude Code / Codex / Gemini.
+
+**🚀 One-line installer** (builds from source + auto-installs skills for every detected agent)
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/study8677/Agent_View_Controller-AVC/main/install.sh | bash
 ```
+
+Installs to `~/.local/bin` (no sudo) when it's on your `PATH`, otherwise falls back to `/usr/local/bin`. Requires Go ≥ 1.24.
 
 <details>
 <summary>Manual install</summary>
@@ -60,12 +70,12 @@ curl -sSL https://raw.githubusercontent.com/study8677/Agent_View_Controller-AVC/
 git clone https://github.com/study8677/Agent_View_Controller-AVC.git
 cd Agent_View_Controller-AVC
 go build -o avc .
-sudo cp avc /usr/local/bin/
+install -m 755 avc ~/.local/bin/   # or sudo cp avc /usr/local/bin/
 
 # Install skill for your agent
-cp -r skills/avc/ ~/.codex/skills/avc/    # Codex CLI
-cp -r skills/avc/ ~/.claude/skills/avc/   # Claude Code
-cp -r skills/avc/ ~/.gemini/skills/avc/   # Gemini CLI
+mkdir -p ~/.codex/skills/avc  && cp skills/avc/SKILL.md ~/.codex/skills/avc/   # Codex CLI
+mkdir -p ~/.claude/skills/avc && cp skills/avc/SKILL.md ~/.claude/skills/avc/  # Claude Code
+mkdir -p ~/.gemini/skills/avc && cp skills/avc/SKILL.md ~/.gemini/skills/avc/  # Gemini CLI
 ```
 
 </details>
