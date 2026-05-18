@@ -50,6 +50,15 @@ echo '{"view":"plan","data":{...}}' | avc
 AVC 管道:        agent | avc                    (视觉处理)
 ```
 
+> ### v0.3.0 新特性
+> - **🌍 7 语言 UI** — `en`、`zh`、`ja`、`ko`、`es`、`fr`、`de`，通过 JSON 中的 `lang` 字段切换
+> - **🍺 Homebrew tap** — `brew install study8677/tap/avc`
+> - **📚 6 个真实场景示例** — 重构、CI/CD、故障应急、K8s 部署、数据迁移、代码审查
+> - **🧪 测试套件 + macOS CI** — 14 个用例，无需显示器即可跑
+> - **🐛 关键 `.gitignore` 修复** — 全新 clone 后 `install.sh` 终于能跑通了
+>
+> 详情见[完整 Release notes](https://github.com/study8677/Agent_View_Controller-AVC/releases/tag/v0.3.0) 或 [CHANGELOG](CHANGELOG.md)。
+
 ## 🚀 快速开始
 
 ### 安装

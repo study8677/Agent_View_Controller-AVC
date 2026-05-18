@@ -43,6 +43,15 @@ Traditional pipe:   agent | grep | jq | awk       (text processing)
 AVC pipe:           agent | avc                    (visual processing)
 ```
 
+> ### What's new in v0.3.0
+> - **🌍 7-language UI** — `en`, `zh`, `ja`, `ko`, `es`, `fr`, `de` via the `lang` JSON field
+> - **🍺 Homebrew tap** — `brew install study8677/tap/avc`
+> - **📚 6 new example scenarios** — refactoring, CI/CD, incident response, K8s, data migration, code review
+> - **🧪 Test suite + macOS CI** — 14 cases, runs headless
+> - **🐛 Critical `.gitignore` fix** — `install.sh` now actually works on fresh clones
+>
+> See the [full release notes](https://github.com/study8677/Agent_View_Controller-AVC/releases/tag/v0.3.0) or the [CHANGELOG](CHANGELOG.md).
+
 ## Quick Start
 
 ### Install
