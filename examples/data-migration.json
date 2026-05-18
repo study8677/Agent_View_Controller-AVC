@@ -1,0 +1,21 @@
+{
+  "view": "plan",
+  "title": "Migration des donnees utilisateurs de PostgreSQL vers MongoDB",
+  "lang": "fr",
+  "editable": true,
+  "token_count": 4780,
+  "data": {
+    "steps": [
+      {"id": 1, "label": "Analyser le schema users de PostgreSQL et concevoir la structure de documents MongoDB", "status": "pending"},
+      {"id": 2, "label": "Provisionner un cluster MongoDB Atlas M30 dans la region eu-west-3", "status": "pending"},
+      {"id": 3, "label": "Ecrire un script Python avec psycopg2 et pymongo pour l'extraction par lots de 5000 lignes", "status": "pending"},
+      {"id": 4, "label": "Aplatir les relations user_profiles et user_addresses en sous-documents embarques", "status": "pending"},
+      {"id": 5, "label": "Creer les index MongoDB sur email (unique) et created_at (descendant)", "status": "pending"},
+      {"id": 6, "label": "Executer la migration sur l'environnement staging et valider le nombre de documents", "status": "pending"},
+      {"id": 7, "label": "Mettre en place une double ecriture pendant la phase de transition", "status": "pending"},
+      {"id": 8, "label": "Basculer le trafic de lecture vers MongoDB via un feature flag progressif", "status": "pending"},
+      {"id": 9, "label": "Archiver la table PostgreSQL et planifier sa suppression apres 30 jours", "status": "pending"}
+    ]
+  },
+  "actions": ["confirm", "cancel"]
+}

@@ -1,0 +1,21 @@
+{
+  "view": "plan",
+  "title": "Refactor Authentication Module to JWT",
+  "lang": "en",
+  "editable": true,
+  "token_count": 4820,
+  "data": {
+    "steps": [
+      {"id": 1, "label": "Audit existing session-based auth flow in src/auth/session.js", "status": "pending"},
+      {"id": 2, "label": "Add jsonwebtoken and bcryptjs to package.json dependencies", "status": "pending"},
+      {"id": 3, "label": "Create JwtService with sign/verify/refresh methods", "status": "pending"},
+      {"id": 4, "label": "Replace express-session middleware with JWT auth middleware", "status": "pending"},
+      {"id": 5, "label": "Migrate /login and /logout routes to issue access + refresh tokens", "status": "pending"},
+      {"id": 6, "label": "Update React AuthContext to store tokens in httpOnly cookies", "status": "pending"},
+      {"id": 7, "label": "Add token rotation and revocation list in Redis", "status": "pending"},
+      {"id": 8, "label": "Write Jest tests for token expiry, refresh, and tampering", "status": "pending"},
+      {"id": 9, "label": "Update API docs and deprecate /session endpoint", "status": "pending"}
+    ]
+  },
+  "actions": ["confirm", "cancel"]
+}

@@ -1,0 +1,22 @@
+{
+  "view": "plan",
+  "title": "Pre-Merge Code Review Checklist",
+  "lang": "en",
+  "editable": true,
+  "token_count": 3920,
+  "data": {
+    "steps": [
+      {"id": 1, "label": "Verify PR description references the linked issue and includes a test plan", "status": "pending"},
+      {"id": 2, "label": "Check that all new exported functions have JSDoc/godoc comments", "status": "pending"},
+      {"id": 3, "label": "Confirm unit test coverage for changed lines is at least 80%", "status": "pending"},
+      {"id": 4, "label": "Scan diff for hardcoded secrets, API keys, or debug console.log statements", "status": "pending"},
+      {"id": 5, "label": "Validate that error paths are handled and not silently swallowed", "status": "pending"},
+      {"id": 6, "label": "Review SQL queries for N+1 patterns and missing indexes", "status": "pending"},
+      {"id": 7, "label": "Ensure new dependencies are pinned and added to the SBOM allow-list", "status": "pending"},
+      {"id": 8, "label": "Check accessibility: ARIA labels, keyboard nav, color contrast on UI changes", "status": "pending"},
+      {"id": 9, "label": "Confirm migration scripts are reversible and tested on a copy of prod data", "status": "pending"},
+      {"id": 10, "label": "Run lint, typecheck, and full test suite locally before approving", "status": "pending"}
+    ]
+  },
+  "actions": ["confirm", "cancel"]
+}

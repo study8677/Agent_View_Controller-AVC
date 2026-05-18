@@ -1,0 +1,21 @@
+{
+  "view": "plan",
+  "title": "ステートレスサービスを Kubernetes にデプロイ",
+  "lang": "ja",
+  "editable": true,
+  "token_count": 4150,
+  "data": {
+    "steps": [
+      {"id": 1, "label": "Dockerfile を作成しマルチステージビルドでイメージサイズを最適化", "status": "pending"},
+      {"id": 2, "label": "イメージを ECR にプッシュ (タグ: v1.0.0, latest)", "status": "pending"},
+      {"id": 3, "label": "Deployment マニフェストを作成 (replicas: 3, rollingUpdate 戦略)", "status": "pending"},
+      {"id": 4, "label": "Service と Ingress を定義し ALB Controller でルーティング設定", "status": "pending"},
+      {"id": 5, "label": "ConfigMap と Secret で環境変数と DB 認証情報を注入", "status": "pending"},
+      {"id": 6, "label": "Liveness と Readiness プローブを /healthz エンドポイントに設定", "status": "pending"},
+      {"id": 7, "label": "HorizontalPodAutoscaler を CPU 70% で構成 (min: 3, max: 10)", "status": "pending"},
+      {"id": 8, "label": "kubectl apply で staging クラスタにデプロイし smoke test 実行", "status": "pending"},
+      {"id": 9, "label": "Prometheus ServiceMonitor を追加してメトリクス収集を有効化", "status": "pending"}
+    ]
+  },
+  "actions": ["confirm", "cancel"]
+}
