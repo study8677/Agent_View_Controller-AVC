@@ -164,6 +164,38 @@ body {
   background: var(--accent-glow);
 }
 
+/* Keyboard-focused step: subtle left-border accent + faint glow.
+   Designed to layer cleanly on top of .skipped (opacity) and .drag-over
+   (which has its own border color) — drag-over still wins visually because
+   it sets border-color on every side. */
+.step-item.focused {
+  border-left: 3px solid var(--accent);
+  padding-left: 16px; /* 18px - 2px to compensate for thicker border */
+  box-shadow: inset 2px 0 0 var(--accent-glow), 0 0 0 1px var(--accent-glow);
+  background: linear-gradient(90deg, var(--accent-glow) 0%, transparent 40%);
+}
+
+.step-item.focused .step-number {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Skipped + focused: keep the accent stripe visible even at reduced opacity. */
+.step-item.focused.skipped {
+  opacity: 0.7;
+}
+
+/* Fade-out animation for keyboard-triggered delete so the user sees what
+   happened before the row vanishes. */
+.step-item.removing {
+  animation: stepRemove 0.16s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes stepRemove {
+  to { opacity: 0; transform: translateX(-8px); }
+}
+
 .step-item.skipped {
   opacity: 0.4;
 }
