@@ -5,7 +5,10 @@
     <em>Agent 输出 JSON 进去，人类的视觉决策 JSON 出来</em>
   </p>
   <p align="center">
-    中文 · <a href="./README.md">English</a>
+    <a href="./README.md">🇬🇧 English</a> · <strong>🇨🇳 中文</strong>
+  </p>
+  <p align="center">
+    <sub><em>欢迎贡献更多 README 翻译 —— 详见 CONTRIBUTING。</em></sub>
   </p>
 </p>
 
@@ -150,6 +153,18 @@ else
 fi
 ```
 
+### 更多示例
+
+[`examples/`](./examples/) 目录里有 **7 个开箱即用的真实场景**：代码重构、CI/CD、生产故障响应、Kubernetes 部署、数据迁移、代码评审——覆盖 4 种 UI 语言（en/zh/ja/fr）。每个文件的 `token_count` 都设计成会触发弹窗，无需 `--no-threshold`：
+
+```bash
+cat examples/incident-response.json | avc   # zh — 生产数据库故障响应手册
+cat examples/kubernetes-deploy.json | avc   # ja — 无状态服务上线
+cat examples/data-migration.json   | avc   # fr — PostgreSQL → MongoDB
+```
+
+详细索引见 [`examples/README.md`](./examples/README.md)。
+
 ## 📊 支持的视图
 
 | 视图类型 | 描述 | 交互方式 | 状态 |
@@ -181,8 +196,41 @@ fi
 
 > 说明：
 > - `token_count` 是可选字段。如果省略，AVC 会根据 JSON 字节长度自动估算。
-> - `lang` 是可选字段（默认 `"en"`）。设为 `"zh"` 让 UI 按钮和状态栏切换为中文 ——
->   建议和 step 标签的语言保持一致，避免中英混杂。
+> - `lang` 是可选字段（默认 `"en"`），用于本地化 UI 文案 —— 完整支持的 7 种语言见下一节。
+
+## 🌍 UI 语言
+
+AVC 的 WebView UI（按钮、状态栏、提示）已翻译为 **7 种语言**。在 JSON 输入的顶层 `lang` 字段中设置即可：
+
+| `lang` | 语言         | 确认按钮         | 取消按钮       | 状态：「pending」     |
+|--------|-------------|----------------|---------------|---------------------|
+| `en`   | English     | Confirm        | Cancel        | pending             |
+| `zh`   | 中文         | 确认执行        | 取消           | 待执行               |
+| `ja`   | 日本語       | 実行を確定      | キャンセル      | 保留中               |
+| `ko`   | 한국어       | 실행 확인       | 취소          | 대기 중               |
+| `es`   | Español     | Confirmar      | Cancelar      | pendiente           |
+| `fr`   | Français    | Confirmer      | Annuler       | en attente          |
+| `de`   | Deutsch     | Bestätigen     | Abbrechen     | ausstehend          |
+
+示例 —— 把 UI 渲染为中文：
+
+```json
+{
+  "view": "plan",
+  "title": "重构用户认证模块",
+  "lang": "zh",
+  "editable": true,
+  "data": {
+    "steps": [
+      { "id": 1, "label": "抽取认证中间件", "status": "pending" },
+      { "id": 2, "label": "创建 JWT 服务", "status": "pending" },
+      { "id": 3, "label": "更新路由处理器", "status": "pending" }
+    ]
+  }
+}
+```
+
+> `lang` 字段默认为 `"en"`，仅影响 UI 文案（按钮、状态标签、提示），**不会**翻译步骤内容 —— `label` 文本请按你的目标读者使用对应语言。
 
 ## 🎚️ Token 阈值
 

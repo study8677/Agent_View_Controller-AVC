@@ -85,8 +85,7 @@ echo '<json>' | avc --threshold=5000
 
 > Notes:
 > - `token_count` is optional. If omitted, AVC estimates from byte length.
-> - `lang` is optional (default `"en"`). Set to `"zh"` to render UI in Chinese.
->   Match this to the language of the step labels for a consistent UI.
+> - `lang` is optional (default `"en"`). Localizes UI chrome (buttons / status bar) only — not step content. Supported: `en`, `zh`, `ja`, `ko`, `es`, `fr`, `de`. Match it to the language of your step labels.
 
 ### Supported view types
 

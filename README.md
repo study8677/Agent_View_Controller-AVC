@@ -5,7 +5,10 @@
     <em>Agent outputs JSON in → Human's visual decision JSON out</em>
   </p>
   <p align="center">
-    <a href="./README_CN.md">中文</a> · English
+    <strong>🇬🇧 English</strong> · <a href="./README_CN.md">🇨🇳 中文</a>
+  </p>
+  <p align="center">
+    <sub><em>More README translations welcome — see CONTRIBUTING.</em></sub>
   </p>
 </p>
 
@@ -143,6 +146,18 @@ else
 fi
 ```
 
+### More examples
+
+The [`examples/`](./examples/) folder ships **7 ready-to-pipe scenarios** covering refactoring, CI/CD, incident response, Kubernetes deploys, data migration, and code review — across 4 UI languages (en/zh/ja/fr). Each has a realistic `token_count` so the popup fires without `--no-threshold`:
+
+```bash
+cat examples/incident-response.json | avc   # zh — production DB outage runbook
+cat examples/kubernetes-deploy.json | avc   # ja — stateless service rollout
+cat examples/data-migration.json   | avc   # fr — PostgreSQL → MongoDB
+```
+
+See [`examples/README.md`](./examples/README.md) for the full index.
+
 ## Supported Views
 
 | View Type | Description | Interaction | Status |
@@ -174,8 +189,41 @@ fi
 
 > Notes:
 > - `token_count` is optional. If omitted, AVC estimates from byte length.
-> - `lang` is optional (default `"en"`). Set `"zh"` to render the UI buttons
->   and status bar in Chinese — match this to the language of your step labels.
+> - `lang` is optional (default `"en"`). Set it to localize UI chrome — see the next section for all 7 supported languages.
+
+## 🌍 UI Languages
+
+AVC's WebView UI (buttons, status bar, tooltips) is translated into **7 languages**. Set the top-level `lang` field on your JSON input to pick one:
+
+| `lang` | Language    | Confirm button | Cancel button | Status: "pending" |
+|--------|-------------|----------------|---------------|-------------------|
+| `en`   | English     | Confirm        | Cancel        | pending           |
+| `zh`   | 中文         | 确认执行        | 取消           | 待执行             |
+| `ja`   | 日本語       | 実行を確定      | キャンセル      | 保留中             |
+| `ko`   | 한국어       | 실행 확인       | 취소          | 대기 중             |
+| `es`   | Español     | Confirmar      | Cancelar      | pendiente         |
+| `fr`   | Français    | Confirmer      | Annuler       | en attente        |
+| `de`   | Deutsch     | Bestätigen     | Abbrechen     | ausstehend        |
+
+Example — render the UI in Japanese:
+
+```json
+{
+  "view": "plan",
+  "title": "ユーザー認証のリファクタリング",
+  "lang": "ja",
+  "editable": true,
+  "data": {
+    "steps": [
+      { "id": 1, "label": "認証ミドルウェアを抽出", "status": "pending" },
+      { "id": 2, "label": "JWT サービスを作成", "status": "pending" },
+      { "id": 3, "label": "ルートハンドラーを更新", "status": "pending" }
+    ]
+  }
+}
+```
+
+> The `lang` field defaults to `"en"` and only affects UI chrome (buttons, status labels, tooltips). It does **not** translate your step content — keep `label` text in whatever language matches your audience.
 
 ## 🎚️ Token Threshold
 

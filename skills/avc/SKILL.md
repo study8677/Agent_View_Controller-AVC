@@ -50,9 +50,7 @@ Build a JSON object with `view` type and structured data:
 }
 ```
 
-> **Tip — `lang` field:** Set `"lang": "zh"` to render the UI buttons and
-> status bar in Chinese (default: `"en"`). Match this to the language of
-> the step labels so the human reviewer sees a consistent UI.
+> **Tip — `lang` field:** Localizes UI chrome (buttons / status bar / tooltips) only — not step content. Supported: `en` (default), `zh`, `ja`, `ko`, `es`, `fr`, `de`. Match it to the language of your step labels for a consistent UI.
 
 ### Step 2: Pipe to AVC
 
