@@ -34,6 +34,91 @@ const I18N = {
     unknownView:    '未知视图类型',
     unsupportedHint: viewType => `视图类型 "${viewType}" 暂不支持。`,
   },
+  ja: {
+    subtitle:       'エージェント・ビュー・コントローラー',
+    ready:          '準備完了',
+    cancel:         '✕ キャンセル',
+    confirm:        '✅ 実行',
+    confirmHint:    'Enter で実行 · Esc でキャンセル',
+    skip:           'スキップ',
+    restore:        '戻す',
+    delete:         '削除',
+    addStep:        '+ ステップ追加',
+    newStep:        '新しいステップ',
+    stepsActive:    (a, t) => `${a}/${t} ステップ有効 · ドラッグで並べ替え · Enter で実行`,
+    doneMessage:    '✅ 送信しました。ウィンドウを閉じてください。',
+    loadError:      'データの読み込みに失敗しました',
+    unknownView:    '不明なビュータイプ',
+    unsupportedHint: viewType => `ビュータイプ "${viewType}" はまだサポートされていません。`,
+  },
+  ko: {
+    subtitle:       '에이전트 뷰 컨트롤러',
+    ready:          '준비됨',
+    cancel:         '✕ 취소',
+    confirm:        '✅ 실행',
+    confirmHint:    'Enter 실행 · Esc 취소',
+    skip:           '건너뛰기',
+    restore:        '되돌리기',
+    delete:         '삭제',
+    addStep:        '+ 단계 추가',
+    newStep:        '새 단계',
+    stepsActive:    (a, t) => `${a}/${t} 단계 활성 · 끌어서 순서 변경 · Enter 실행`,
+    doneMessage:    '✅ 전송 완료. 이 창을 닫아도 됩니다.',
+    loadError:      '데이터 로드 실패',
+    unknownView:    '알 수 없는 뷰 유형',
+    unsupportedHint: viewType => `뷰 유형 "${viewType}"은(는) 아직 지원되지 않습니다.`,
+  },
+  es: {
+    subtitle:       'Controlador de Vista del Agente',
+    ready:          'Listo',
+    cancel:         '✕ Cancelar',
+    confirm:        '✅ Confirmar',
+    confirmHint:    'Enter para confirmar · Esc para cancelar',
+    skip:           'Omitir',
+    restore:        'Restaurar',
+    delete:         'Eliminar',
+    addStep:        '+ Añadir paso',
+    newStep:        'Nuevo paso',
+    stepsActive:    (a, t) => `${a}/${t} pasos activos · arrastra para reordenar · Enter para confirmar`,
+    doneMessage:    '✅ Enviado. Puedes cerrar esta ventana.',
+    loadError:      'Error al cargar los datos',
+    unknownView:    'Tipo de vista desconocido',
+    unsupportedHint: viewType => `El tipo de vista "${viewType}" aún no es compatible.`,
+  },
+  fr: {
+    subtitle:       'Contrôleur de Vue de l’Agent',
+    ready:          'Prêt',
+    cancel:         '✕ Annuler',
+    confirm:        '✅ Confirmer',
+    confirmHint:    'Entrée pour confirmer · Échap pour annuler',
+    skip:           'Ignorer',
+    restore:        'Restaurer',
+    delete:         'Supprimer',
+    addStep:        '+ Ajouter une étape',
+    newStep:        'Nouvelle étape',
+    stepsActive:    (a, t) => `${a}/${t} étapes actives · glisser pour réordonner · Entrée pour confirmer`,
+    doneMessage:    '✅ Envoyé. Vous pouvez fermer cette fenêtre.',
+    loadError:      'Échec du chargement des données',
+    unknownView:    'Type de vue inconnu',
+    unsupportedHint: viewType => `Le type de vue "${viewType}" n’est pas encore pris en charge.`,
+  },
+  de: {
+    subtitle:       'Agent-View-Controller',
+    ready:          'Bereit',
+    cancel:         '✕ Abbrechen',
+    confirm:        '✅ Bestätigen',
+    confirmHint:    'Enter zum Bestätigen · Esc zum Abbrechen',
+    skip:           'Überspringen',
+    restore:        'Wiederherstellen',
+    delete:         'Löschen',
+    addStep:        '+ Schritt hinzufügen',
+    newStep:        'Neuer Schritt',
+    stepsActive:    (a, t) => `${a}/${t} Schritte aktiv · zum Neuordnen ziehen · Enter zum Bestätigen`,
+    doneMessage:    '✅ Gesendet. Sie können dieses Fenster schließen.',
+    loadError:      'Daten konnten nicht geladen werden',
+    unknownView:    'Unbekannter Ansichtstyp',
+    unsupportedHint: viewType => `Ansichtstyp "${viewType}" wird noch nicht unterstützt.`,
+  },
 };
 
 let t = I18N.en; // resolved translator, replaced in init()
@@ -58,10 +143,13 @@ async function init() {
     inputData = JSON.parse(raw);
     currentState = JSON.parse(JSON.stringify(inputData)); // deep clone
 
-    // Resolve language from input JSON (default English)
-    const lang = (inputData.lang || 'en').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+    // Resolve language from input JSON (default English).
+    // Accepts the 2-letter base of any supported locale (e.g. 'zh-CN' -> 'zh').
+    const rawLang = (inputData.lang || 'en').toLowerCase().slice(0, 2);
+    const htmlLangMap = { en: 'en', zh: 'zh-CN', ja: 'ja', ko: 'ko', es: 'es', fr: 'fr', de: 'de' };
+    const lang = htmlLangMap[rawLang] ? rawLang : 'en';
     t = I18N[lang];
-    document.documentElement.lang = (lang === 'zh') ? 'zh-CN' : 'en';
+    document.documentElement.lang = htmlLangMap[lang];
 
     // Localize static UI chrome
     document.getElementById('page-subtitle').textContent = t.subtitle;
