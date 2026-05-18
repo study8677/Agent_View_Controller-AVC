@@ -319,7 +319,17 @@ The pattern is universal — **any** tool that can:
 
 - **Go** + [webview/webview_go](https://github.com/webview/webview_go) — system-native WebView bindings
 - **Vanilla JS** — embedded via `go:embed`, zero frontend dependencies
-- **macOS**: WKWebView · **Linux**: WebKitGTK · **Windows**: WebView2
+
+## Platform Support
+
+| Platform | WebView Backend | Status |
+|----------|-----------------|--------|
+| **macOS**   | WKWebView      | ✅ Verified in CI |
+| **Linux**   | WebKitGTK      | ⚠ Should work — not yet tested. Reports welcome. |
+| **Windows** | WebView2       | ⚠ Should work — not yet tested. Reports welcome. |
+
+> If you successfully run AVC on Linux or Windows, please open an issue or PR
+> so we can mark the platform as verified.
 
 ## Architecture
 
@@ -377,7 +387,8 @@ Contributions welcome! We especially need help with:
 
 - **New view types** — Pick any from the roadmap above and implement it
 - **UI polish** — Animations, themes, accessibility
-- **Platform testing** — Linux (WebKitGTK) and Windows (WebView2)
+- **Platform verification** — Linux (WebKitGTK) and Windows (WebView2) are unverified;
+  successful runs (or fixes) would let us turn ⚠ into ✅
 - **Agent integration examples** — Show how AVC works with different agents
 
 ## License

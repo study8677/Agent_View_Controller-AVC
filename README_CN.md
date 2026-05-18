@@ -350,7 +350,17 @@ echo '{"view":"plan","title":"重构认证模块","data":{"steps":[
 
 - **Go** + [webview/webview_go](https://github.com/webview/webview_go) — 系统原生 WebView 绑定
 - **Vanilla JS** — 通过 `go:embed` 嵌入，零前端依赖
-- **macOS**: WKWebView · **Linux**: WebKitGTK · **Windows**: WebView2
+
+## 🖥️ 平台支持
+
+| 平台 | WebView 后端 | 状态 |
+|------|------------|------|
+| **macOS**   | WKWebView   | ✅ CI 持续验证 |
+| **Linux**   | WebKitGTK   | ⚠ 理论支持，尚未验证。欢迎反馈结果。 |
+| **Windows** | WebView2    | ⚠ 理论支持，尚未验证。欢迎反馈结果。 |
+
+> 如果你在 Linux 或 Windows 上成功运行了 AVC，欢迎开 Issue / PR
+> 帮我们把对应平台标为 ✅。
 
 ## 🗺️ 路线图
 
@@ -397,7 +407,7 @@ AVC 的愿景是成为所有 CLI Agent 的**通用视觉层**。Agent 产出的�
 
 - **新视图类型** — 从上面路线图中选一个实现
 - **UI 打磨** — 动画、主题、无障碍访问
-- **平台测试** — Linux（WebKitGTK）和 Windows（WebView2）
+- **平台验证** — Linux（WebKitGTK）和 Windows（WebView2）尚未验证；你的成功运行报告（或修复 PR）可以把 ⚠ 变成 ✅
 - **Agent 集成示例** — 展示 AVC 如何与不同 Agent 配合
 
 ## 📄 License
