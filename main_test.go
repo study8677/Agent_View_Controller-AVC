@@ -157,6 +157,94 @@ func TestDecide_ThresholdZeroAlwaysRenders(t *testing.T) {
 	}
 }
 
+// ───── install-skill subcommand ─────
+
+func TestDispatchSubcommand(t *testing.T) {
+	cases := []struct {
+		name        string
+		args        []string
+		wantHandled bool
+	}{
+		{"empty args → not handled (pipe mode)", []string{}, false},
+		{"unknown subcommand → not handled", []string{"frobnicate"}, false},
+		{"install-skill → handled", []string{"install-skill"}, true},
+		{"install-skill with extra args → handled", []string{"install-skill", "claude"}, true},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			// We can't actually invoke runInstallSkill here without touching the
+			// filesystem; just verify the routing decision. install-skill with
+			// no detectable agent in a sandbox will exit non-zero, but that's
+			// the handler's business, not the dispatcher's.
+			handled, _ := dispatchSubcommand(c.args)
+			if handled != c.wantHandled {
+				t.Errorf("dispatchSubcommand(%v): handled=%v, want %v", c.args, handled, c.wantHandled)
+			}
+		})
+	}
+}
+
+func TestResolveSkillTargets_ExplicitArgs(t *testing.T) {
+	home := "/fake/home"
+	exists := func(string) bool { return true } // not consulted on explicit-arg path
+
+	targets, err := resolveSkillTargets([]string{"claude", "codex"}, home, exists)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(targets) != 2 {
+		t.Fatalf("expected 2 targets, got %d", len(targets))
+	}
+	got := map[string]bool{}
+	for _, tgt := range targets {
+		got[tgt.Key] = true
+	}
+	if !got["claude"] || !got["codex"] {
+		t.Errorf("missing expected target(s): %+v", targets)
+	}
+}
+
+func TestResolveSkillTargets_UnknownAgent(t *testing.T) {
+	_, err := resolveSkillTargets([]string{"emacs"}, "/fake/home", func(string) bool { return true })
+	if err == nil {
+		t.Fatal("expected error for unknown agent, got nil")
+	}
+	if !strings.Contains(err.Error(), "emacs") {
+		t.Errorf("error should name the unknown agent, got: %v", err)
+	}
+}
+
+func TestResolveSkillTargets_AutoDetect(t *testing.T) {
+	// Only ~/.claude and ~/.gemini "exist" in this fake fs.
+	exists := func(path string) bool {
+		return strings.HasSuffix(path, "/.claude") || strings.HasSuffix(path, "/.gemini")
+	}
+	targets, err := resolveSkillTargets(nil, "/fake/home", exists)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(targets) != 2 {
+		t.Fatalf("expected 2 auto-detected targets, got %d", len(targets))
+	}
+	keys := map[string]bool{}
+	for _, tgt := range targets {
+		keys[tgt.Key] = true
+	}
+	if !keys["claude"] || !keys["gemini"] {
+		t.Errorf("expected claude+gemini auto-detected, got %+v", targets)
+	}
+}
+
+func TestResolveSkillTargets_NoDetection(t *testing.T) {
+	targets, err := resolveSkillTargets(nil, "/fake/home", func(string) bool { return false })
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(targets) != 0 {
+		t.Errorf("expected 0 targets when nothing detected, got %d", len(targets))
+	}
+}
+
 func truncate(s string, n int) string {
 	if len(s) <= n {
 		return s
