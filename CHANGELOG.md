@@ -5,6 +5,22 @@ All notable changes to AVC (Agent View Controller) are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-05-19
+
+### Added
+- **`graph` view** (Phase 2 of the roadmap): node-edge topology diagrams for microservice architectures, dependency maps, ER models, and data flows. Drag nodes to reposition (positions persist on round-trip), double-click to edit labels, click an edge + Delete to remove. Toolbar buttons for adding nodes (spiral-search empty spot) and connecting edges (click two nodes). Full keyboard navigation: Tab to cycle, A to add, Enter to edit, Delete to remove. Node types — `service`, `gateway`, `database`, `external`, `default` — get distinct accent colors.
+- `examples/graph-microservices.json` — a 12-node / 17-edge e-commerce architecture (API Gateway → Auth/User/Product/Order Services → PostgreSQL, Redis, Elasticsearch, Stripe, SendGrid) covering all 5 node types.
+- 6 new graph i18n strings (`graphAddNode`, `graphAddEdge`, `graphPickFirstNode`, `graphPickSecondNode`, `graphNewNode`, `graphInfo`) translated across all 7 locales.
+- `--quiet` / `-q` flag suppresses the informational "passing through" stderr message; errors still go to stderr. Useful for scripts that pipe through avc.
+- `avc install-skill [agent...]` subcommand: auto-detects (or accepts explicit args for) Codex CLI / Claude Code / Gemini CLI / GitHub Copilot config dirs and copies the embedded `SKILL.md` into each. Skill text is bundled via `//go:embed` so no source tree is required at install time.
+- Pre-built macOS binaries (arm64 + x86_64) automatically built and attached to GitHub Releases via GoReleaser on every tag push. Brings the install time from ~30s (build from source) to instant.
+- CI smoke-tests every `examples/*.json`: forces pass-through with `--threshold=99999` and asserts exit code, valid JSON output, and `view`-field round-trip.
+
+### Changed
+- WebView now mutes Go's `os.Stderr` while the window is alive, so the macOS framework warnings (`TSM AdjustCapsLockLED...`, `error messaging the mach port for IMKCFRunLoopWakeUpReliable`) no longer pollute pipelines like `... | avc | jq`. AVC's own writes happen before the mute and after the restore, so they're unaffected.
+- `ui/app.js` refactored to a registry pattern (`registerKeyHandler`, `registerInfoUpdater`) so new views plug in instead of editing the dispatcher. Removed the hardcoded `handlePlanKey` reference. Plan view migrated to the new APIs.
+- Brew formula now ships pre-built binaries instead of building from source, so `brew install study8677/tap/avc` no longer downloads Go (228 MB) on first install.
+
 ## [0.3.0] - 2026-05-18
 
 ### Added
@@ -40,5 +56,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial public release: plan view with drag-to-reorder editing.
 
+[0.4.0]: https://github.com/study8677/Agent_View_Controller-AVC/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/study8677/Agent_View_Controller-AVC/compare/v0.1.0...v0.3.0
 [0.1.0]: https://github.com/study8677/Agent_View_Controller-AVC/releases/tag/v0.1.0
