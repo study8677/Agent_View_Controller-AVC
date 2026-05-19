@@ -11,11 +11,17 @@ var indexHTML string
 //go:embed ui/styles.css
 var stylesCSS string
 
+//go:embed ui/views/graph.css
+var graphCSS string
+
 //go:embed ui/app.js
 var appJS string
 
 //go:embed ui/views/plan.js
 var planJS string
+
+//go:embed ui/views/graph.js
+var graphJS string
 
 // htmlContent is the final inlined HTML served to the WebView.
 // We assemble it once at startup: the source HTML uses three placeholder
@@ -26,13 +32,15 @@ var planJS string
 var htmlContent string
 
 func init() {
-	// To add a new view: drop it under ui/views/, embed it here, and
-	// concatenate it into viewsJS below. The view file must end with
-	// registerView('name', renderFn).
-	viewsJS := planJS
+	// To add a new view: drop ui/views/<name>.js (+ optional .css), embed
+	// them here, and concatenate into viewsJS / cssContent below. The view
+	// file must end with registerView('name', renderFn) and may also call
+	// registerKeyHandler / registerInfoUpdater.
+	cssContent := stylesCSS + "\n\n" + graphCSS
+	viewsJS := planJS + "\n\n" + graphJS
 
 	htmlContent = strings.NewReplacer(
-		"/*__STYLES__*/", stylesCSS,
+		"/*__STYLES__*/", cssContent,
 		"/*__APP_JS__*/", appJS,
 		"/*__VIEWS_JS__*/", viewsJS,
 	).Replace(indexHTML)

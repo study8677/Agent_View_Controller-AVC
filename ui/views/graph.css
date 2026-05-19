@@ -1,0 +1,207 @@
+/* ===== Graph View ===== */
+
+.graph-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 12px;
+}
+
+.graph-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.graph-tool-btn {
+  padding: 6px 14px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.graph-tool-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.graph-tool-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.graph-mode-hint {
+  font-size: 12px;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  margin-left: 4px;
+  min-height: 18px; /* prevent layout jump when toggled */
+}
+
+/* Viewport: scrollable window into the fixed-size "world". */
+.graph-viewport {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle, rgba(139, 148, 158, 0.06) 1px, transparent 1px)
+    0 0 / 24px 24px,
+    var(--bg-secondary);
+  position: relative;
+}
+
+.graph-viewport::-webkit-scrollbar { width: 8px; height: 8px; }
+.graph-viewport::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.graph-world {
+  position: relative;
+}
+
+/* SVG covers the entire world, sits BELOW nodes so node clicks aren't
+   intercepted by the SVG layer. */
+.graph-edges {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none; /* let nodes get clicks; we re-enable per <line> below */
+  color: var(--text-muted); /* default stroke via currentColor */
+}
+
+.graph-edge {
+  stroke: currentColor;
+  stroke-width: 1.6;
+  fill: none;
+  pointer-events: stroke; /* clicks land on the line itself */
+  cursor: pointer;
+  transition: stroke 0.15s ease, stroke-width 0.15s ease;
+}
+
+/* Wider invisible hit target so thin edges are easy to click. */
+.graph-edge-hit {
+  stroke: transparent;
+  stroke-width: 10;
+  fill: none;
+  pointer-events: stroke;
+  cursor: pointer;
+}
+
+.graph-edge.selected {
+  stroke: var(--accent);
+  stroke-width: 2.4;
+}
+
+.graph-edge-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--text-secondary);
+  pointer-events: none;
+  user-select: none;
+  paint-order: stroke;
+  stroke: var(--bg-secondary);
+  stroke-width: 4px;
+}
+
+.graph-edge-label.selected {
+  fill: var(--accent);
+}
+
+.graph-nodes {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ===== Node ===== */
+
+.graph-node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: grab;
+  transition: border-color var(--transition), box-shadow var(--transition),
+              transform var(--transition);
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.graph-node:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.graph-node:active { cursor: grabbing; }
+
+.graph-node.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow), 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.graph-node.pending-edge {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(188, 140, 255, 0.2);
+  animation: graphPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes graphPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(188, 140, 255, 0.2); }
+  50%      { box-shadow: 0 0 0 6px rgba(188, 140, 255, 0.35); }
+}
+
+.graph-node-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.2;
+  width: 100%;
+  outline: none;
+}
+
+.graph-node-label[contenteditable="true"]:focus {
+  color: var(--accent);
+}
+
+.graph-node-type {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Node type → left-accent color. We keep the base bg neutral so the accent
+   reads at a glance without screaming. */
+.graph-node.type-service  { border-left-color: var(--accent);  }
+.graph-node.type-gateway  { border-left-color: var(--purple);  }
+.graph-node.type-database { border-left-color: var(--success); }
+.graph-node.type-external { border-left-color: var(--warning); }
+.graph-node.type-default  { border-left-color: var(--text-muted); }
+
+.graph-node.type-service  .graph-node-type { color: var(--accent); }
+.graph-node.type-gateway  .graph-node-type { color: var(--purple); }
+.graph-node.type-database .graph-node-type { color: var(--success); }
+.graph-node.type-external .graph-node-type { color: var(--warning); }
+
+/* When connecting an edge, the cursor signals we're in pick-a-node mode. */
+body.graph-edge-mode .graph-node { cursor: crosshair; }
+body.graph-edge-mode .graph-viewport { cursor: crosshair; }

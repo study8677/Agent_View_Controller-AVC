@@ -1,0 +1,43 @@
+{
+  "view": "graph",
+  "title": "E-commerce Microservice Architecture",
+  "lang": "en",
+  "editable": true,
+  "token_count": 4200,
+  "data": {
+    "nodes": [
+      { "id": "gateway",  "label": "API Gateway",          "type": "gateway",  "x": 800, "y": 120 },
+      { "id": "auth",     "label": "Auth Service",         "type": "service",  "x": 400, "y": 280 },
+      { "id": "user",     "label": "User Service",         "type": "service",  "x": 640, "y": 320 },
+      { "id": "product",  "label": "Product Service",      "type": "service",  "x": 900, "y": 320 },
+      { "id": "order",    "label": "Order Service",        "type": "service",  "x": 1150, "y": 320 },
+      { "id": "payment",  "label": "Payment Service",      "type": "service",  "x": 1150, "y": 510 },
+      { "id": "notify",   "label": "Notification Service", "type": "service",  "x": 640, "y": 510 },
+      { "id": "pg",       "label": "PostgreSQL",           "type": "database", "x": 800, "y": 700 },
+      { "id": "redis",    "label": "Redis",                "type": "database", "x": 1050, "y": 700 },
+      { "id": "es",       "label": "Elasticsearch",        "type": "database", "x": 1280, "y": 700 },
+      { "id": "stripe",   "label": "Stripe API",           "type": "external", "x": 1380, "y": 510 },
+      { "id": "sendgrid", "label": "SendGrid",             "type": "external", "x": 400, "y": 510 }
+    ],
+    "edges": [
+      { "from": "gateway",  "to": "auth",     "label": "REST" },
+      { "from": "gateway",  "to": "user",     "label": "REST" },
+      { "from": "gateway",  "to": "product",  "label": "REST" },
+      { "from": "gateway",  "to": "order",    "label": "REST" },
+      { "from": "auth",     "to": "user",     "label": "gRPC" },
+      { "from": "order",    "to": "user",     "label": "gRPC" },
+      { "from": "order",    "to": "product",  "label": "gRPC" },
+      { "from": "order",    "to": "payment",  "label": "async" },
+      { "from": "order",    "to": "notify",   "label": "events" },
+      { "from": "auth",     "to": "pg" },
+      { "from": "user",     "to": "pg" },
+      { "from": "product",  "to": "pg" },
+      { "from": "product",  "to": "es",       "label": "index" },
+      { "from": "order",    "to": "pg" },
+      { "from": "payment",  "to": "redis",    "label": "idempotency" },
+      { "from": "payment",  "to": "stripe",   "label": "HTTPS" },
+      { "from": "notify",   "to": "sendgrid", "label": "SMTP" }
+    ]
+  },
+  "actions": ["confirm", "cancel"]
+}
