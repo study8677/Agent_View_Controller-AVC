@@ -262,5 +262,11 @@ function onDragEnd(e) {
   dragSrcIndex = null;
 }
 
-// Register with the dispatcher
+// Register with the dispatcher.
 registerView('plan', renderPlanView);
+registerKeyHandler('plan', handlePlanKey);
+registerInfoUpdater('plan', () => {
+  const steps = currentState.data?.steps || [];
+  const active = steps.filter((s) => !s.skipped).length;
+  return t.stepsActive(active, steps.length);
+});

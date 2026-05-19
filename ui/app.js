@@ -17,6 +17,13 @@ const I18N = {
     loadError:      'Failed to load data',
     unknownView:    'Unknown view type',
     unsupportedHint: viewType => `View type "${viewType}" is not yet supported.`,
+    // Graph view
+    graphAddNode:       '+ Node',
+    graphAddEdge:       '+ Edge',
+    graphPickFirstNode: 'Click a node to start',
+    graphPickSecondNode:'Click another node to connect',
+    graphNewNode:       'New node',
+    graphInfo:          (n, e) => `${n} nodes · ${e} edges · drag to move · Tab: navigate · A: add · Del: remove`,
   },
   zh: {
     subtitle:       'Agent 视图控制器',
@@ -35,6 +42,13 @@ const I18N = {
     loadError:      '加载数据失败',
     unknownView:    '未知视图类型',
     unsupportedHint: viewType => `视图类型 "${viewType}" 暂不支持。`,
+    // Graph view
+    graphAddNode:       '+ 节点',
+    graphAddEdge:       '+ 连线',
+    graphPickFirstNode: '点击一个节点开始连线',
+    graphPickSecondNode:'再点另一个节点完成连线',
+    graphNewNode:       '新节点',
+    graphInfo:          (n, e) => `${n} 节点 · ${e} 连线 · 拖动改位置 · Tab：切换 · A：新增 · Del：删除`,
   },
   ja: {
     subtitle:       'エージェント・ビュー・コントローラー',
@@ -53,6 +67,13 @@ const I18N = {
     loadError:      'データの読み込みに失敗しました',
     unknownView:    '不明なビュータイプ',
     unsupportedHint: viewType => `ビュータイプ "${viewType}" はまだサポートされていません。`,
+    // Graph view
+    graphAddNode:       '+ ノード',
+    graphAddEdge:       '+ エッジ',
+    graphPickFirstNode: 'ノードをクリックして接続を開始',
+    graphPickSecondNode:'別のノードをクリックして接続',
+    graphNewNode:       '新しいノード',
+    graphInfo:          (n, e) => `${n} ノード · ${e} エッジ · ドラッグで移動 · Tab：選択 · A：追加 · Del：削除`,
   },
   ko: {
     subtitle:       '에이전트 뷰 컨트롤러',
@@ -71,6 +92,13 @@ const I18N = {
     loadError:      '데이터 로드 실패',
     unknownView:    '알 수 없는 뷰 유형',
     unsupportedHint: viewType => `뷰 유형 "${viewType}"은(는) 아직 지원되지 않습니다.`,
+    // Graph view
+    graphAddNode:       '+ 노드',
+    graphAddEdge:       '+ 연결선',
+    graphPickFirstNode: '노드를 클릭하여 연결 시작',
+    graphPickSecondNode:'다른 노드를 클릭하여 연결',
+    graphNewNode:       '새 노드',
+    graphInfo:          (n, e) => `노드 ${n} · 연결 ${e} · 끌어서 이동 · Tab: 탐색 · A: 추가 · Del: 삭제`,
   },
   es: {
     subtitle:       'Controlador de Vista del Agente',
@@ -89,6 +117,13 @@ const I18N = {
     loadError:      'Error al cargar los datos',
     unknownView:    'Tipo de vista desconocido',
     unsupportedHint: viewType => `El tipo de vista "${viewType}" aún no es compatible.`,
+    // Graph view
+    graphAddNode:       '+ Nodo',
+    graphAddEdge:       '+ Arista',
+    graphPickFirstNode: 'Haz clic en un nodo para empezar',
+    graphPickSecondNode:'Haz clic en otro nodo para conectar',
+    graphNewNode:       'Nuevo nodo',
+    graphInfo:          (n, e) => `${n} nodos · ${e} aristas · arrastra para mover · Tab: navegar · A: añadir · Supr: eliminar`,
   },
   fr: {
     subtitle:       'Contrôleur de Vue de l’Agent',
@@ -107,6 +142,13 @@ const I18N = {
     loadError:      'Échec du chargement des données',
     unknownView:    'Type de vue inconnu',
     unsupportedHint: viewType => `Le type de vue "${viewType}" n’est pas encore pris en charge.`,
+    // Graph view
+    graphAddNode:       '+ Nœud',
+    graphAddEdge:       '+ Lien',
+    graphPickFirstNode: 'Cliquez sur un nœud pour commencer',
+    graphPickSecondNode:'Cliquez sur un autre nœud pour connecter',
+    graphNewNode:       'Nouveau nœud',
+    graphInfo:          (n, e) => `${n} nœuds · ${e} liens · glisser pour déplacer · Tab : naviguer · A : ajouter · Suppr : supprimer`,
   },
   de: {
     subtitle:       'Agent-View-Controller',
@@ -125,6 +167,13 @@ const I18N = {
     loadError:      'Daten konnten nicht geladen werden',
     unknownView:    'Unbekannter Ansichtstyp',
     unsupportedHint: viewType => `Ansichtstyp "${viewType}" wird noch nicht unterstützt.`,
+    // Graph view
+    graphAddNode:       '+ Knoten',
+    graphAddEdge:       '+ Kante',
+    graphPickFirstNode: 'Klicke einen Knoten an, um zu beginnen',
+    graphPickSecondNode:'Klicke einen weiteren Knoten an zum Verbinden',
+    graphNewNode:       'Neuer Knoten',
+    graphInfo:          (n, e) => `${n} Knoten · ${e} Kanten · ziehen zum Verschieben · Tab: Auswahl · A: hinzufügen · Entf: löschen`,
   },
 };
 
@@ -138,9 +187,22 @@ let currentState = null;
 // ===== View Registry =====
 // View modules call registerView('plan', renderFn) to plug themselves in.
 // The dispatcher looks up by name and falls back to an error view.
+//
+// Three parallel registries — one for the render, one for the keyboard
+// handler, and one for the status-bar "info" line. Each is optional except
+// the render: a view without a key handler simply won't intercept anything.
 const VIEWS = {};
+const KEY_HANDLERS = {};
+const INFO_UPDATERS = {};
+
 function registerView(name, renderFn) {
   VIEWS[name] = renderFn;
+}
+function registerKeyHandler(name, fn) {
+  KEY_HANDLERS[name] = fn;
+}
+function registerInfoUpdater(name, fn) {
+  INFO_UPDATERS[name] = fn;
 }
 
 // ===== Init =====
@@ -214,10 +276,9 @@ function handleCancel() {
 }
 
 function updateInfo() {
-  const steps = currentState.data?.steps || [];
-  const active = steps.filter(s => !s.skipped).length;
-  const total = steps.length;
-  document.getElementById('action-info').textContent = t.stepsActive(active, total);
+  const updater = INFO_UPDATERS[inputData?.view];
+  if (!updater) return; // views without an info updater leave the bar alone
+  document.getElementById('action-info').textContent = updater();
 }
 
 // ===== Keyboard Shortcuts =====
@@ -257,12 +318,12 @@ function installKeyboardShortcuts() {
     // While the user is typing into a field we never intercept further.
     if (editing) return;
 
-    // Let the active view consume the key first (e.g. plan view's j/k/Space).
-    // The view returns true if it handled the event; we then bail out so the
-    // global Enter→confirm fallback below doesn't fire.
-    if (typeof handlePlanKey === 'function' && inputData?.view === 'plan') {
-      if (handlePlanKey(e)) return;
-    }
+    // Let the active view consume the key first (e.g. plan view's j/k/Space
+    // or graph view's Tab/A/Del). The view returns true if it handled the
+    // event; we then bail out so the global Enter→confirm fallback below
+    // doesn't fire.
+    const viewHandler = KEY_HANDLERS[inputData?.view];
+    if (viewHandler && viewHandler(e)) return;
 
     // Fallback: plain Enter confirms when no view consumed it.
     if (e.key === 'Enter' && !e.shiftKey) {
