@@ -15,5 +15,6 @@ cat examples/code-refactor.json | avc
 | `kubernetes-deploy.json` | Deploy a stateless service to Kubernetes with HPA and probes | ja |
 | `data-migration.json` | Migrate user data from PostgreSQL to MongoDB Atlas | fr |
 | `code-review-checklist.json` | Pre-merge review checklist for a feature PR | en |
+| `graph-microservices.json` | E-commerce microservice architecture (12 nodes, 17 edges) — **graph view** | en |
 
-Each file matches the AVC plan schema: `view`, `title`, `lang`, `editable`, `token_count`, `data.steps[]`, and `actions[]`. The `token_count` value triggers the WebView popup automatically (no `--no-threshold` flag needed).
+Most files use the `plan` schema (`data.steps[]`); `graph-microservices.json` uses the `graph` schema (`data.nodes[] + data.edges[]`). Every example sets `token_count` above the default 3000 threshold so the WebView pops automatically (no `--no-threshold` flag needed).

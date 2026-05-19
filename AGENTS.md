@@ -89,9 +89,13 @@ echo '<json>' | avc --threshold=5000
 
 ### Supported view types
 
-| view    | Use for                    |
-|---------|----------------------------|
-| `plan`  | Step-by-step execution plans |
+| view    | Use for                                                          | Data shape                      |
+|---------|------------------------------------------------------------------|---------------------------------|
+| `plan`  | Linear step-by-step execution plans                              | `data.steps[]`                  |
+| `graph` | Architecture topology / dependency map / ER / data flow          | `data.nodes[]` + `data.edges[]` |
+
+Use `graph` when you're describing **relationships** between things rather than
+a sequence of steps. See `examples/graph-microservices.json` for the shape.
 
 ### Example
 

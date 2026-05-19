@@ -182,7 +182,7 @@ See [`examples/README.md`](./examples/README.md) for the full index.
 | View Type | Description | Interaction | Status |
 |-----------|-------------|-------------|--------|
 | `plan` | Execution plans / step lists | Drag to reorder, edit, skip, add/delete | ✅ Ready |
-| `graph` | Architecture topology | Drag nodes, edit connections | 🚧 Coming |
+| `graph` | Architecture topology / dependency map | Drag nodes, connect/disconnect edges, edit labels, keyboard nav | ✅ Ready |
 | `diff` | Code diff review | Accept/reject per line | 🚧 Planned |
 | `table` | Data tables | Edit cells, sort columns | 🚧 Planned |
 

@@ -106,9 +106,16 @@ When the human sees your plan in AVC, they can:
 
 ## Supported Views
 
-| view   | Use for                      |
-|--------|------------------------------|
-| `plan` | Step-by-step execution plans |
+| view    | Use for                                                          | Data shape                            |
+|---------|------------------------------------------------------------------|---------------------------------------|
+| `plan`  | Linear step-by-step execution plans (deploys, migrations, TODOs) | `data.steps[]`                        |
+| `graph` | Architecture topology / dependency map / ER / workflow           | `data.nodes[]` + `data.edges[]`       |
+
+**Pick `graph` when the agent's output is a relationship**, not a sequence —
+e.g., microservice architecture, module dependency map, database ER diagram,
+data flow. Nodes are `{ id, label, type?, x?, y? }` with `type ∈ { service,
+gateway, database, external, default }`. Edges are `{ from, to, label? }`.
+Positions persist on round-trip (so the human's layout survives).
 
 ## Example: Full Agent Workflow
 
