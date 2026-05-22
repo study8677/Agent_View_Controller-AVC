@@ -1,4 +1,8 @@
 <p align="center">
+  <strong>🎉 Featured in <a href="https://www.ruanyifeng.com/blog/2026/05/weekly-issue-397.html">Ruan Yifeng's Weekly (Issue #397)</a> — huge thanks for the shoutout! 🙏</strong>
+</p>
+
+<p align="center">
   <h1 align="center">👁️ AVC — Agent View Controller</h1>
   <p align="center">
     <strong>The Visual Dimension Elevator in Unix Pipes</strong><br/>

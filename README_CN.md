@@ -1,4 +1,8 @@
 <p align="center">
+  <strong>🎉 本项目登上了 <a href="https://www.ruanyifeng.com/blog/2026/05/weekly-issue-397.html">阮一峰《科技爱好者周刊》第 397 期</a>，感谢推荐！🙏</strong>
+</p>
+
+<p align="center">
   <h1 align="center">👁️ AVC — Agent View Controller</h1>
   <p align="center">
     <strong>Unix 管道中的「视觉升维器」</strong><br/>
